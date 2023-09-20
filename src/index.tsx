@@ -1,8 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
+import { App } from './App';
 import './style.css';
 
-console.log('test here and there');
-console.log('React', React);
-
-ReactDOM.render(<div>Here</div>, document.getElementById('root'));
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
