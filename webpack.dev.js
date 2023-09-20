@@ -18,5 +18,20 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.tsx'],
   },
-  plugins: [new HtmlWebpackPlugin()],
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: 'Puzzle braker',
+      templateContent: ({ htmlWebpackPlugin }) => `
+      <html>
+        <head>
+          <title>Puzzle braker</title>
+          ${htmlWebpackPlugin.tags.headTags}
+        </head>
+        <body>
+          <div id="root">Hello World</div>
+          ${htmlWebpackPlugin.tags.bodyTags}
+        </body>
+      </html>`,
+    }),
+  ],
 };
