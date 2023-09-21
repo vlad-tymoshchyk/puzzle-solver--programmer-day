@@ -1,5 +1,5 @@
 export interface State {
-  counter: number;
+  figures: IFigure[];
 }
 
 export interface IFigure {
@@ -10,5 +10,7 @@ export interface IFigure {
 }
 
 export type FigureBody = CellCoords[];
+
+export type Field = number[][];
 
 export type CellCoords = [number, number];

@@ -1,17 +1,23 @@
 import { Reducer, Action } from 'redux';
 import { State } from '../types';
 
-export const initialState = {
-  counter: 0,
+export const initialState: State = {
+  figures: [],
 };
 
-export const reducer: Reducer<State, Action> = (state, action) => {
+export const reducer: Reducer<
+  State,
+  {
+    type: string;
+    payload: Partial<State>;
+  }
+> = (state, action) => {
   if (!state) {
     return initialState;
   }
 
   switch (action.type) {
-    case 'increment':
-      return { ...state, counter: state.counter + 1 };
+    case 'set-state':
+      return { ...state, ...action.payload };
   }
 };
