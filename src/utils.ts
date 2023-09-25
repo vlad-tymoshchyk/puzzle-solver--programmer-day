@@ -69,6 +69,11 @@ export const moveY = (body: FigureBody, offset: number = 1): FigureBody => {
   return body.map(([r_i, c_i]) => [r_i + offset, c_i]);
 };
 
+export const flip = (body: FigureBody): FigureBody => {
+  const axis = body[0][1];
+  return body.map(([r_i, c_i]) => [r_i, axis - (c_i - axis)]);
+};
+
 export function findCombinations(
   baseField: Field,
   figure: FigureBody,

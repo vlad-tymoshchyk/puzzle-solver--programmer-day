@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setState } from './store/actions';
-import { easyField, figure1 } from './fixtures';
+import { easyField, figure_1_1 } from './fixtures';
 import { Field } from './types';
 import { solver } from './solver';
 import { isUp } from './utils';
