@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setState } from './store/actions';
-import { easyField, figure1 } from './constants';
+import { easyField, figure1 } from './fixtures';
 import { Field } from './types';
 import { solver } from './solver';
+import { isUp } from './utils';
 
 export function doOverlap(...fields: Field[]): boolean {
   return fields.some((currentField, f_i) => {

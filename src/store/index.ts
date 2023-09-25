@@ -1,6 +1,8 @@
 import { createStore } from 'redux';
 import { reducer } from './reducer';
 
+export { State } from './reducer';
+
 export const store = createStore(
   reducer,
   // eslint-disable-next-line

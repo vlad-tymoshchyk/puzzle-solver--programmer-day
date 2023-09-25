@@ -2,9 +2,12 @@ import { test, expect, vi } from 'vitest';
 import {
   createEmptyField,
   fieldFromFigure,
+  filterGoodCombinations,
+  findCombinations,
   fromString,
   toString,
 } from './utils';
+import { FigureBody } from './types';
 
 test('fromString', () => {
   expect(
@@ -57,5 +60,51 @@ test('fieldFromFigure', () => {
   ).toEqual([
     [9, 9, 0],
     [0, 9, 9],
+  ]);
+});
+
+test('findCombinations', () => {
+  const baseField = fromString(`
+11111
+10001
+10001
+11111
+`);
+  const figure: FigureBody = [
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [1, 2],
+  ];
+  const result = findCombinations(baseField, figure, 2);
+
+  expect(result.map(toString)).toEqual([
+    `
+00000
+02220
+00020
+00000
+`,
+    `
+00000
+00022
+00000
+00000
+`,
+    `
+00000
+00000
+00222
+00002
+`,
+  ]);
+
+  expect(filterGoodCombinations(baseField, result).map(toString)).toEqual([
+    `
+11111
+12221
+10021
+11111
+`,
   ]);
 });

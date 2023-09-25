@@ -62,9 +62,44 @@ export const wait = async (time: number, cb?: Function) =>
   });
 
 export const moveX = (body: FigureBody, offset: number = 1): FigureBody => {
-  return body.map(([r_i, c_i]) => [r_i, c_i + offset * 2]);
+  return body.map(([r_i, c_i]) => [r_i, c_i + offset]);
 };
 
 export const moveY = (body: FigureBody, offset: number = 1): FigureBody => {
   return body.map(([r_i, c_i]) => [r_i + offset, c_i]);
 };
+
+export function findCombinations(
+  baseField: Field,
+  figure: FigureBody,
+  value: number = 1
+): Field[] {
+  const h = baseField.length;
+  const w = baseField[0].length;
+  const emptyField = createEmptyField(h, w);
+  const combinations: Field[] = [];
+  const head_r = figure[0][0];
+  const head_c = figure[0][1];
+
+  baseField.forEachEmpty((_, r_i, c_i) => {
+    if (isUp(r_i, c_i)) {
+      const offset_y = r_i - head_r;
+      const offset_x = c_i - head_c;
+      let f = moveY(figure, offset_y);
+      f = moveX(f, offset_x);
+      const fd = fieldFromFigure(f, value, h, w);
+      combinations.push(emptyField.overlap(fd));
+    }
+  });
+
+  return combinations;
+}
+
+export function filterGoodCombinations(
+  field: Field,
+  combinations: Field[]
+): Field[] {
+  return combinations
+    .filter((comb) => field.canOverlap(comb))
+    .map((comb) => field.overlap(comb));
+}
