@@ -2,6 +2,26 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setState } from './store/actions';
 import { easyField, figure1 } from './constants';
+import { IField } from './types';
+import { solver } from './solver';
+
+export function isUp(y: number, x: number) {
+  return (y % 2 === 0 && x % 2 === 0) || (y % 2 !== 0 && x % 2 !== 0);
+}
+
+export function doOverlap(...fields: IField[]): boolean {
+  return fields.some((currentField, f_i) => {
+    const fieldsAfterCurrent = fields.slice(f_i + 1);
+    return fieldsAfterCurrent.some((field) => {
+      return currentField.some((row, r_i) => {
+        return row.some((cell, c_i) => {
+          // zero or undefined
+          return cell && field[r_i][c_i];
+        });
+      });
+    });
+  });
+}
 
 export const Controller = () => {
   const dispatch = useDispatch();
@@ -11,35 +31,42 @@ export const Controller = () => {
       for (let y = 0; y < easyField.length; y++) {
         const row = easyField[y];
 
-        for (let x = 0; x < row.length; x += 2) {
+        for (let x = 0; x < row.length; x += 1) {
+          // console.log('isUp(y, x)', y, x, isUp(y, x));
+          if (!isUp(y, x)) {
+            continue;
+          }
+
           const cell = row[x];
 
-          await wait(100, () => {
-            dispatch(
-              setState({
-                figures: [
-                  {
-                    leftTop: [y, x],
-                    focused: false,
-                    color: 'blue',
-                    body: figure1,
-                  },
-                ],
-              })
-            );
-          });
+          // await wait(100, () => {
+          //   dispatch(
+          //     setState({
+          //       figures: [
+          //         {
+          //           leftTop: [y, x],
+          //           focused: false,
+          //           color: 'blue',
+          //           body: figure1,
+          //         },
+          //       ],
+          //     })
+          //   );
+          // });
         }
       }
     })();
   }, [dispatch]);
 
-  return <div>Controller</div>;
+  return (
+    <div>
+      <button
+        onClick={() => {
+          solver();
+        }}
+      >
+        Start
+      </button>
+    </div>
+  );
 };
-
-export const wait = async (time: number, cb: Function) =>
-  new Promise<void>((res) => {
-    setTimeout(() => {
-      cb();
-      res();
-    }, time);
-  });

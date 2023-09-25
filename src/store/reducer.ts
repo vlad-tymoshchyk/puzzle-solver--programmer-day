@@ -1,8 +1,9 @@
 import { Reducer, Action } from 'redux';
 import { State } from '../types';
+import { easyField } from '../constants';
 
 export const initialState: State = {
-  figures: [],
+  field: easyField,
 };
 
 export const reducer: Reducer<

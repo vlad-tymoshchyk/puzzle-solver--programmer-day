@@ -1,6 +1,6 @@
-import { Field } from './types';
+import { IField } from './types';
 
-export const fromString = (str: string): Field => {
+export const fromString = (str: string): IField => {
   let rowLength: number;
   return str
     .trim()
@@ -44,3 +44,11 @@ assertEqual(
   ],
   'fromString should work correctly'
 );
+
+export const wait = async (time: number, cb?: Function) =>
+  new Promise<void>((res) => {
+    setTimeout(() => {
+      cb && cb();
+      res();
+    }, time);
+  });

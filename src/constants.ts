@@ -3,7 +3,6 @@ import { fromString } from './utils';
 
 export const CELL_SIDE = 50;
 export const CELL_HEIGHT = CELL_SIDE * Math.cos(Math.PI / 6);
-console.log('CELL_SIDE, CELL_HEIGHT', CELL_SIDE, CELL_HEIGHT);
 
 export const easyField = fromString(`
 ++++++++++++++++++
