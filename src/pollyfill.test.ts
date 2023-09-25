@@ -1,5 +1,4 @@
 import { test, expect, vi } from 'vitest';
-import './pollyfill';
 
 const a = [
   [1, 1],

@@ -1,64 +1,48 @@
-import { emptyField } from './constants';
-import { CellCoords, FigureBody, Field } from './types';
+import { HEIGHT, WIDTH } from './constants';
+import { FigureBody, Field } from './types';
 
 export function isUp(y: number, x: number) {
   return (y % 2 === 0 && x % 2 === 0) || (y % 2 !== 0 && x % 2 !== 0);
 }
 
-export const fromString = (str: string): Field => {
-  let rowLength: number;
+export function fromString(str: string): Field {
   return str
     .trim()
     .split('\n')
     .map((row) => {
-      if (!rowLength) {
-        rowLength = row.length;
-      } else {
-        if (row.length !== rowLength) {
-          throw new Error(
-            'All rows length should be: ' +
-              rowLength +
-              ', received: ' +
-              row.length
-          );
-        }
-      }
-
       return row.split('').map((cell) => {
-        return cell !== '_' ? 1 : 0;
+        return +cell;
       });
     });
+}
+
+export const toString = (field: Field): string => {
+  return (
+    '\n' +
+    field
+      .map((row) => {
+        return row.join('');
+      })
+      .join('\n') +
+    '\n'
+  );
 };
 
-export const toString = (field: Field): Field => {
-  return [];
-};
+export function createEmptyField(height: number, width: number) {
+  return Array(height)
+    .fill(null)
+    .map(() => {
+      return Array(width).fill(0);
+    });
+}
 
-const fieldStr = `
-______++++++___
-_____+++_______
-`;
-
-export const assertEqual = (a: any, b: any, msg?: string) => {
-  const _a = JSON.stringify(a);
-  const _b = JSON.stringify(b);
-  console.assert(_a === _b, msg, a, b);
-};
-
-assertEqual(
-  fromString(fieldStr),
-  [
-    [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-  ],
-  'fromString should work correctly'
-);
-
-export const fieldFromFigure = (
+export function fieldFromFigure(
   coords: FigureBody,
-  value: number = 1
-): Field => {
-  const field = emptyField.deepCopy();
+  value: number = 1,
+  height: number = HEIGHT,
+  width: number = WIDTH
+): Field {
+  const field = createEmptyField(height, width);
 
   coords.forEach(([r_i, c_i]) => {
     if (field[r_i] !== undefined && field[r_i][c_i] !== undefined) {
@@ -67,7 +51,7 @@ export const fieldFromFigure = (
   });
 
   return field;
-};
+}
 
 export const wait = async (time: number, cb?: Function) =>
   new Promise<void>((res) => {

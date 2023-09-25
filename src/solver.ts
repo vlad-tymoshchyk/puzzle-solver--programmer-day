@@ -1,9 +1,8 @@
-import { isUp } from './Controller';
-import { easyField, emptyField, figure1 } from './constants';
+import { easyField, emptyField, figure1 } from './fixtures';
 import { store } from './store';
 import { setState } from './store/actions';
 import { FigureBody } from './types';
-import { fieldFromFigure, moveX, moveY, wait } from './utils';
+import { fieldFromFigure, moveX, moveY, wait, isUp } from './utils';
 
 export const solver = async () => {
   const figuresToDisplay: FigureBody[] = [];
