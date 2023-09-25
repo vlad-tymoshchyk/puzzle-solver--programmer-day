@@ -1,6 +1,10 @@
-import { Reducer, Action } from 'redux';
-import { State } from '../types';
+import { Reducer } from 'redux';
 import { easyField } from '../constants';
+import { Field } from '../types';
+
+export interface State {
+  field: Field;
+}
 
 export const initialState: State = {
   field: easyField,

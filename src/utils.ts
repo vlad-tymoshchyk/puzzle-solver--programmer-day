@@ -1,6 +1,11 @@
-import { IField } from './types';
+import { emptyField } from './constants';
+import { CellCoords, FigureBody, Field } from './types';
 
-export const fromString = (str: string): IField => {
+export function isUp(y: number, x: number) {
+  return (y % 2 === 0 && x % 2 === 0) || (y % 2 !== 0 && x % 2 !== 0);
+}
+
+export const fromString = (str: string): Field => {
   let rowLength: number;
   return str
     .trim()
@@ -25,6 +30,10 @@ export const fromString = (str: string): IField => {
     });
 };
 
+export const toString = (field: Field): Field => {
+  return [];
+};
+
 const fieldStr = `
 ______++++++___
 _____+++_______
@@ -45,6 +54,21 @@ assertEqual(
   'fromString should work correctly'
 );
 
+export const fieldFromFigure = (
+  coords: FigureBody,
+  value: number = 1
+): Field => {
+  const field = emptyField.deepCopy();
+
+  coords.forEach(([r_i, c_i]) => {
+    if (field[r_i] !== undefined && field[r_i][c_i] !== undefined) {
+      field[r_i][c_i] = value;
+    }
+  });
+
+  return field;
+};
+
 export const wait = async (time: number, cb?: Function) =>
   new Promise<void>((res) => {
     setTimeout(() => {
@@ -52,3 +76,11 @@ export const wait = async (time: number, cb?: Function) =>
       res();
     }, time);
   });
+
+export const moveX = (body: FigureBody, offset: number = 1): FigureBody => {
+  return body.map(([r_i, c_i]) => [r_i, c_i + offset * 2]);
+};
+
+export const moveY = (body: FigureBody, offset: number = 1): FigureBody => {
+  return body.map(([r_i, c_i]) => [r_i + offset, c_i]);
+};

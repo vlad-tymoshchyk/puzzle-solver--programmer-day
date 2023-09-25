@@ -46,3 +46,14 @@ test('handles different sizes', () => {
   ]);
   expect(a.canOverlap([[2]])).toBe(false);
 });
+
+test('deep copy', () => {
+  const origin = [
+    [1, 2],
+    [3, 4],
+  ];
+  const copy = origin.deepCopy();
+  expect(origin).not.toBe(copy);
+  expect(origin[0]).not.toBe(copy[0]);
+  expect(origin).toEqual(copy);
+});

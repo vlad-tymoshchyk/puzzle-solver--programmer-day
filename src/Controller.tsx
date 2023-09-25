@@ -2,14 +2,10 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setState } from './store/actions';
 import { easyField, figure1 } from './constants';
-import { IField } from './types';
+import { Field } from './types';
 import { solver } from './solver';
 
-export function isUp(y: number, x: number) {
-  return (y % 2 === 0 && x % 2 === 0) || (y % 2 !== 0 && x % 2 !== 0);
-}
-
-export function doOverlap(...fields: IField[]): boolean {
+export function doOverlap(...fields: Field[]): boolean {
   return fields.some((currentField, f_i) => {
     const fieldsAfterCurrent = fields.slice(f_i + 1);
     return fieldsAfterCurrent.some((field) => {
