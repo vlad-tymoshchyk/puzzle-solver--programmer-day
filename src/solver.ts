@@ -1,22 +1,7 @@
-import {
-  easyField,
-  emptyField,
-  figure_1_1,
-  figure_1_2,
-  figure_1_3,
-} from './fixtures';
+import { easyField, figure_1_1, figure_1_2, figure_1_3 } from './fixtures';
 import { store } from './store';
 import { setState } from './store/actions';
-import { FigureBody } from './types';
-import {
-  fieldFromFigure,
-  moveX,
-  moveY,
-  wait,
-  isUp,
-  findCombinations,
-  filterGoodCombinations,
-} from './utils';
+import { wait, findCombinations, filterGoodCombinations } from './utils';
 
 export const solver = async () => {
   const figures = [figure_1_1, figure_1_2, figure_1_3];

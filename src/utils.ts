@@ -109,16 +109,10 @@ export function filterGoodCombinations(
     .map((comb) => field.overlap(comb));
 }
 
-export function turn120(figure: FigureBody): FigureBody {
-  const [p_r, p_c] = figure[0];
-
-  // return figure.map(([r_i, c_i]) => {});
-  return figure;
-}
-
 export const _smallSide = (1 / 2) * Math.tan(Math.PI / 6);
 export const _bigSide = 1 / 2 / Math.cos(Math.PI / 6);
 export const _height = _smallSide + _bigSide;
+export const _d = _bigSide - _smallSide;
 
 export function getYDistance([r1, c1], [r2, c2]) {
   const fullCellsInBetween = Math.abs(r1 - r2) - 1;
@@ -158,11 +152,11 @@ export function getYDistance([r1, c1], [r2, c2]) {
   return distance;
 }
 
-export function getXDistance(c1, c2) {
+export function getXDistance(c1: number, c2: number) {
   return Math.abs(c1 - c2) * 0.5;
 }
 
-export function getBaseAngle(x, y): number {
+export function getBaseAngle(x: number, y: number): number {
   if (y === 0 && x >= 0) {
     return 0;
   } else if (x > 0 && y > 0) {
@@ -202,21 +196,46 @@ export function shiftPoint([x, y], shiftAngle: number): [number, number] {
     r(Math.cos(angle) * hyp),
     r(Math.sin(angle) * hyp),
   ];
+  console.log('baseAngle', baseAngle);
+  console.log('res, x, y, angle', res, x, y, angle);
   return res;
+}
+
+export function turnCoordinates(
+  coords: [number, number][],
+  angle: number
+): [number, number][] {
+  const newFigureCoordinates = coords.map(([x, y]) => {
+    const shifted = shiftPoint([x, y], angle);
+    return shifted;
+  });
+  console.log('newFigureCoordinates', newFigureCoordinates);
+  return newFigureCoordinates;
 }
 
 export function turn60(figure: FigureBody): FigureBody {
   const newFigureCoordinates = figure.map(([r_i, c_i]) => {
-    return shiftPoint([r_i, c_i], Math.PI / 3);
+    const shifted = shiftPoint([r_i * r(_height), c_i * 0.5], Math.PI / 3);
+    console.log('shifted, r_i, c_i', shifted, r_i, c_i);
+    return shifted;
   });
-
+  console.log('newFigureCoordinates', newFigureCoordinates);
   return newFigureCoordinates.map(coordinatesToIndices);
 }
 
-export function coordinatesToIndices([y, x]: [number, number]): [
+export function indicesToCoordinates([r_i, c_i]: [number, number]): [
   number,
   number
 ] {
-  const indices: [number, number] = [0, x / 0.5];
+  return [c_i * 0.5, r_i * _height + (isUp(r_i, c_i) ? 0 : _d)];
+}
+
+export function coordinatesToIndices([x, y]: [number, number]): [
+  number,
+  number
+] {
+  const _y = y - (y % _height);
+  const indices: [number, number] = [_y / _height, x / 0.5];
+  console.log('x, y, indices', x, y, indices);
   return indices;
 }

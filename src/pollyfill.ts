@@ -1,4 +1,4 @@
-import { FigureBody, Field } from './types';
+import { Field } from './types';
 
 export {};
 

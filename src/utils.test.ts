@@ -1,4 +1,4 @@
-import { test, expect, vi } from 'vitest';
+import { test, expect } from 'vitest';
 import {
   _bigSide,
   _height,
@@ -13,9 +13,11 @@ import {
   getXDistance,
   getYDistance,
   toString,
-  turn120,
-  turn60,
   getBaseAngle,
+  indicesToCoordinates,
+  coordinatesToIndices,
+  _d,
+  turnCoordinates,
 } from './utils';
 import { FigureBody } from './types';
 
@@ -162,6 +164,20 @@ test('getXDistance', () => {
   expect(getXDistance(0, 2)).toBe(1);
 });
 
+test('indicesToCoordinates', () => {
+  expect(indicesToCoordinates([0, 0])).toEqual([0, 0]);
+  expect(indicesToCoordinates([0, 1])).toEqual([0.5, _d]);
+  expect(indicesToCoordinates([1, 1])).toEqual([0.5, _height]);
+  expect(indicesToCoordinates([-1, -1])).toEqual([-0.5, -_height]);
+});
+
+test('coordinatesToIndices', () => {
+  expect(coordinatesToIndices([0, 0])).toEqual([0, 0]);
+  expect(coordinatesToIndices([0.5, _d])).toEqual([0, 1]);
+  expect(coordinatesToIndices([0.5, _height])).toEqual([1, 1]);
+  expect(coordinatesToIndices([2.5, _height * 4 + _d])).toEqual([4, 5]);
+});
+
 test('getBaseAngle', () => {
   expect(getBaseAngle(0, 0)).toBe(0);
   expect(getBaseAngle(5, 0)).toBe(0);
@@ -179,26 +195,16 @@ test('shiftPoint', () => {
   expect(shiftPoint([0, 5], Math.PI / 2)).toEqual([-5, 0]);
   expect(shiftPoint([-5, 0], Math.PI / 2)).toEqual([-0, -5]);
   expect(shiftPoint([0, -5], Math.PI / 2)).toEqual([5, -0]);
-
   expect(shiftPoint([2, 2], Math.PI / 2)).toEqual([-2, 2]);
+  expect(shiftPoint([5, 4.33013], Math.PI / 2)).toEqual([-4.33013, 5]);
 });
 
-test('turn60', () => {
-  const res = turn60([[0, 1]]);
-  // expect(res).toEqual([
-  //   [0, 1],
-  //   [0, 2],
-  // ]);
-});
-
-test.skip('turn', () => {
-  expect(
-    turn120([
-      [0, 0],
-      [1, 0],
-    ])
-  ).toEqual([
-    [0, 0],
-    [0, -1],
-  ]);
+test.only('pipeline', () => {
+  const figure: FigureBody = [[0, 1]];
+  const coords = figure.map(indicesToCoordinates);
+  expect(coords).toEqual([[0.5, _d]]);
+  const turned = turnCoordinates(coords, Math.PI / 3);
+  console.log('turned', turned);
+  const turnedFigure = turned.map(coordinatesToIndices);
+  console.log('turnedFigure', turnedFigure);
 });
