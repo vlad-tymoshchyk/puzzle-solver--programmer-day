@@ -118,6 +118,7 @@ export function turn120(figure: FigureBody): FigureBody {
 
 export const _smallSide = (1 / 2) * Math.tan(Math.PI / 6);
 export const _bigSide = 1 / 2 / Math.cos(Math.PI / 6);
+export const _height = _smallSide + _bigSide;
 
 export function getYDistance([r1, c1], [r2, c2]) {
   const fullCellsInBetween = Math.abs(r1 - r2) - 1;
@@ -146,7 +147,76 @@ export function getYDistance([r1, c1], [r2, c2]) {
     } else {
       distance += _bigSide;
     }
+  } else {
+    if ((isUp(r1, c1) && isUp(r2, c2)) || (!isUp(r1, c1) && !isUp(r2, c2))) {
+      distance = 0;
+    } else {
+      distance = _bigSide - _smallSide;
+    }
   }
 
   return distance;
+}
+
+export function getXDistance(c1, c2) {
+  return Math.abs(c1 - c2) * 0.5;
+}
+
+export function getBaseAngle(x, y): number {
+  if (y === 0 && x >= 0) {
+    return 0;
+  } else if (x > 0 && y > 0) {
+    return Math.atan(y / x);
+  } else if (x === 0 && y >= 0) {
+    return Math.PI / 2;
+  } else if (x < 0 && y > 0) {
+    return Math.atan(y / -x) + Math.PI / 2;
+  } else if (y === 0 && x < 0) {
+    return Math.PI;
+  } else if (x < 0 && y < 0) {
+    return Math.atan(-y / -x) + Math.PI;
+  } else if (x === 0 && y < 0) {
+    return Math.PI * (3 / 2);
+  } else if (x > 0 && y < 0) {
+    return Math.atan(-y / x) + Math.PI * (3 / 2);
+  } else {
+    console.error('No condition worked', x, y);
+  }
+}
+
+export function ang(angle: number) {
+  return (angle / Math.PI) * 180;
+}
+export function r(num: number) {
+  return +num.toFixed(5);
+}
+export function shiftPoint([x, y], shiftAngle: number): [number, number] {
+  if (x === 0 && y === 0) {
+    return [0, 0];
+  }
+
+  const baseAngle = getBaseAngle(x, y);
+  const angle = baseAngle + shiftAngle;
+  const hyp = Math.sqrt(x ** 2 + y ** 2);
+  const res: [number, number] = [
+    r(Math.cos(angle) * hyp),
+    r(Math.sin(angle) * hyp),
+  ];
+  return res;
+}
+
+export function turn60(figure: FigureBody): FigureBody {
+  const newFigureCoordinates = figure.map(([r_i, c_i]) => {
+    return shiftPoint([r_i, c_i], Math.PI / 3);
+  });
+
+  return newFigureCoordinates.map(coordinatesToIndices);
+}
+
+export function coordinatesToIndices([y, x]: [number, number]): [
+  number,
+  number
+] {
+  const indices: [number, number] = [0, x / 0.5];
+  return indices;
 }
