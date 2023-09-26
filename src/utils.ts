@@ -108,3 +108,45 @@ export function filterGoodCombinations(
     .filter((comb) => field.canOverlap(comb))
     .map((comb) => field.overlap(comb));
 }
+
+export function turn120(figure: FigureBody): FigureBody {
+  const [p_r, p_c] = figure[0];
+
+  // return figure.map(([r_i, c_i]) => {});
+  return figure;
+}
+
+export const _smallSide = (1 / 2) * Math.tan(Math.PI / 6);
+export const _bigSide = 1 / 2 / Math.cos(Math.PI / 6);
+
+export function getYDistance([r1, c1], [r2, c2]) {
+  const fullCellsInBetween = Math.abs(r1 - r2) - 1;
+  let distance = fullCellsInBetween * (_smallSide + _bigSide);
+  if (r1 < r2) {
+    if (isUp(r1, c1)) {
+      distance += _smallSide;
+    } else {
+      distance += _bigSide;
+    }
+
+    if (isUp(r2, c2)) {
+      distance += _bigSide;
+    } else {
+      distance += _smallSide;
+    }
+  } else if (r1 > r2) {
+    if (isUp(r1, c1)) {
+      distance += _bigSide;
+    } else {
+      distance += _smallSide;
+    }
+
+    if (isUp(r2, c2)) {
+      distance += _smallSide;
+    } else {
+      distance += _bigSide;
+    }
+  }
+
+  return distance;
+}

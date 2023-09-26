@@ -1,13 +1,16 @@
 import { test, expect, vi } from 'vitest';
 import {
+  _bigSide,
+  _smallSide,
   createEmptyField,
   fieldFromFigure,
   filterGoodCombinations,
   findCombinations,
   flip,
   fromString,
+  getYDistance,
   toString,
-  turn,
+  turn120,
 } from './utils';
 import { FigureBody } from './types';
 
@@ -125,5 +128,22 @@ test('flip', () => {
     [2, 0],
     [2, -1],
     [1, -1],
+  ]);
+});
+
+test.only('getYDistance', () => {
+  expect(getYDistance([0, 0], [1, 0])).toBe(_smallSide + _smallSide);
+  expect(getYDistance([1, 0], [2, 0])).toBe(_bigSide + _bigSide);
+});
+
+test('turn', () => {
+  expect(
+    turn120([
+      [0, 0],
+      [1, 0],
+    ])
+  ).toEqual([
+    [0, 0],
+    [0, -1],
   ]);
 });
