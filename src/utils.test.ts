@@ -174,8 +174,8 @@ test('indicesToCoordinates', () => {
 test('coordinatesToIndices', () => {
   expect(coordinatesToIndices([0, 0])).toEqual([0, 0]);
   expect(coordinatesToIndices([0.5, _d])).toEqual([0, 1]);
-  expect(coordinatesToIndices([0.5, _height])).toEqual([1, 1]);
-  expect(coordinatesToIndices([2.5, _height * 4 + _d])).toEqual([4, 5]);
+  expect(coordinatesToIndices([0.5, -_height])).toEqual([1, 1]);
+  expect(coordinatesToIndices([2.5, -_height * 4 + _d])).toEqual([4, 5]);
 });
 
 test('getBaseAngle', () => {
@@ -199,12 +199,22 @@ test('shiftPoint', () => {
   expect(shiftPoint([5, 4.33013], Math.PI / 2)).toEqual([-4.33013, 5]);
 });
 
-test.only('pipeline', () => {
-  const figure: FigureBody = [[0, 1]];
+test.skip('pipeline', () => {
+  const figure: FigureBody = [
+    [0, 0],
+    [0, 1],
+    [0, 2],
+  ];
+
   const coords = figure.map(indicesToCoordinates);
-  expect(coords).toEqual([[0.5, _d]]);
-  const turned = turnCoordinates(coords, Math.PI / 3);
-  console.log('turned', turned);
-  const turnedFigure = turned.map(coordinatesToIndices);
+  console.log('coords', coords);
+  const turnedCoords = turnCoordinates(coords, Math.PI * (2 / 3));
+  console.log('turnedCoords', turnedCoords);
+  const turnedFigure = turnedCoords.map(coordinatesToIndices);
   console.log('turnedFigure', turnedFigure);
+  expect(turnedFigure).toEqual([
+    [0, 0],
+    [0, -1],
+    [-1, -1],
+  ]);
 });

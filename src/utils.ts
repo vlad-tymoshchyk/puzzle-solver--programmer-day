@@ -196,8 +196,6 @@ export function shiftPoint([x, y], shiftAngle: number): [number, number] {
     r(Math.cos(angle) * hyp),
     r(Math.sin(angle) * hyp),
   ];
-  console.log('baseAngle', baseAngle);
-  console.log('res, x, y, angle', res, x, y, angle);
   return res;
 }
 
@@ -209,18 +207,7 @@ export function turnCoordinates(
     const shifted = shiftPoint([x, y], angle);
     return shifted;
   });
-  console.log('newFigureCoordinates', newFigureCoordinates);
   return newFigureCoordinates;
-}
-
-export function turn60(figure: FigureBody): FigureBody {
-  const newFigureCoordinates = figure.map(([r_i, c_i]) => {
-    const shifted = shiftPoint([r_i * r(_height), c_i * 0.5], Math.PI / 3);
-    console.log('shifted, r_i, c_i', shifted, r_i, c_i);
-    return shifted;
-  });
-  console.log('newFigureCoordinates', newFigureCoordinates);
-  return newFigureCoordinates.map(coordinatesToIndices);
 }
 
 export function indicesToCoordinates([r_i, c_i]: [number, number]): [
@@ -234,8 +221,8 @@ export function coordinatesToIndices([x, y]: [number, number]): [
   number,
   number
 ] {
-  const _y = y - (y % _height);
-  const indices: [number, number] = [_y / _height, x / 0.5];
-  console.log('x, y, indices', x, y, indices);
+  const _y = -(y - (y % _height));
+  console.log('y, _y', y, _y);
+  const indices: [number, number] = [r(_y / _height), r(x / 0.5)];
   return indices;
 }
