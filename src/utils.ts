@@ -1,4 +1,4 @@
-import { HEIGHT, WIDTH } from './constants';
+import { HEIGHT, WIDTH, deg } from './constants';
 import { FigureBody, Field } from './types';
 
 export function isUp(y: number, x: number) {
@@ -113,6 +113,9 @@ export const _smallSide = (1 / 2) * Math.tan(Math.PI / 6);
 export const _bigSide = 1 / 2 / Math.cos(Math.PI / 6);
 export const _height = _smallSide + _bigSide;
 export const _d = _bigSide - _smallSide;
+console.log('_smallSide', _smallSide);
+console.log('_bigSide', _bigSide);
+console.log('_height', _height);
 
 export function getYDistance([r1, c1], [r2, c2]) {
   const fullCellsInBetween = Math.abs(r1 - r2) - 1;
@@ -181,8 +184,8 @@ export function getBaseAngle(x: number, y: number): number {
 export function ang(angle: number) {
   return (angle / Math.PI) * 180;
 }
-export function r(num: number) {
-  return +num.toFixed(5);
+export function r(num: number, count: number = 5): number {
+  return +num.toFixed(count);
 }
 export function shiftPoint([x, y], shiftAngle: number): [number, number] {
   if (x === 0 && y === 0) {
@@ -191,10 +194,13 @@ export function shiftPoint([x, y], shiftAngle: number): [number, number] {
 
   const baseAngle = getBaseAngle(x, y);
   const angle = baseAngle + shiftAngle;
+  // console.log('baseAngle * deg', baseAngle * deg);
+  // console.log('shiftAngle * deg', shiftAngle * deg);
+  // console.log('angle', angle * deg);
   const hyp = Math.sqrt(x ** 2 + y ** 2);
   const res: [number, number] = [
-    r(Math.cos(angle) * hyp),
     r(Math.sin(angle) * hyp),
+    r(Math.cos(angle) * hyp),
   ];
   return res;
 }
@@ -214,15 +220,29 @@ export function indicesToCoordinates([r_i, c_i]: [number, number]): [
   number,
   number
 ] {
-  return [c_i * 0.5, r_i * _height + (isUp(r_i, c_i) ? 0 : _d)];
+  return [c_i * 0.5, -r_i * _height + (isUp(r_i, c_i) ? 0 : _d)];
 }
 
 export function coordinatesToIndices([x, y]: [number, number]): [
   number,
   number
 ] {
+  if (Array.isArray(x) || Array.isArray(y)) {
+    console.log('ERROR, NESTED ARRAY', x, y);
+    console.trace();
+  }
   const _y = -(y - (y % _height));
-  console.log('y, _y', y, _y);
   const indices: [number, number] = [r(_y / _height), r(x / 0.5)];
+  console.log('indices, x, y', indices, x, y);
+
   return indices;
+}
+
+export function center(figure: FigureBody, padding: number = 0): FigureBody {
+  const offset_r = Math.min(...figure.map(([r_i]) => r_i));
+  const offset_c = Math.min(...figure.map(([_, c_i]) => c_i));
+
+  return figure.map(([r_i, c_i]) => {
+    return [r_i - offset_r + padding, c_i - offset_c + padding];
+  });
 }

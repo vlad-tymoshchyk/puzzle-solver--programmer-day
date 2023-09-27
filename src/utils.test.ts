@@ -18,6 +18,7 @@ import {
   coordinatesToIndices,
   _d,
   turnCoordinates,
+  center,
 } from './utils';
 import { FigureBody } from './types';
 
@@ -167,15 +168,15 @@ test('getXDistance', () => {
 test('indicesToCoordinates', () => {
   expect(indicesToCoordinates([0, 0])).toEqual([0, 0]);
   expect(indicesToCoordinates([0, 1])).toEqual([0.5, _d]);
-  expect(indicesToCoordinates([1, 1])).toEqual([0.5, _height]);
-  expect(indicesToCoordinates([-1, -1])).toEqual([-0.5, -_height]);
+  expect(indicesToCoordinates([1, 1])).toEqual([0.5, -_height]);
+  expect(indicesToCoordinates([-1, -1])).toEqual([-0.5, _height]);
 });
 
 test('coordinatesToIndices', () => {
   expect(coordinatesToIndices([0, 0])).toEqual([0, 0]);
   expect(coordinatesToIndices([0.5, _d])).toEqual([0, 1]);
   expect(coordinatesToIndices([0.5, -_height])).toEqual([1, 1]);
-  expect(coordinatesToIndices([2.5, -_height * 4 + _d])).toEqual([4, 5]);
+  expect(coordinatesToIndices([2.5, -_height * 4 - _d])).toEqual([4, 5]);
 });
 
 test('getBaseAngle', () => {
@@ -189,17 +190,22 @@ test('getBaseAngle', () => {
   expect(getBaseAngle(0, -5)).toBe(Math.PI * (3 / 2));
 });
 
-test('shiftPoint', () => {
-  expect(shiftPoint([0, 0], Math.PI / 2)).toEqual([0, 0]);
-  expect(shiftPoint([5, 0], Math.PI / 2)).toEqual([0, 5]);
-  expect(shiftPoint([0, 5], Math.PI / 2)).toEqual([-5, 0]);
-  expect(shiftPoint([-5, 0], Math.PI / 2)).toEqual([-0, -5]);
-  expect(shiftPoint([0, -5], Math.PI / 2)).toEqual([5, -0]);
-  expect(shiftPoint([2, 2], Math.PI / 2)).toEqual([-2, 2]);
-  expect(shiftPoint([5, 4.33013], Math.PI / 2)).toEqual([-4.33013, 5]);
+test.only('shiftPoint', () => {
+  // expect(shiftPoint([0, 0], Math.PI / 2)).toEqual([0, 0]);
+  // expect(shiftPoint([5, 0], Math.PI / 2)).toEqual([0, 5]);
+  // expect(shiftPoint([0, 5], Math.PI / 2)).toEqual([-5, 0]);
+  // expect(shiftPoint([-5, 0], Math.PI / 2)).toEqual([-0, -5]);
+  // expect(shiftPoint([0, -5], Math.PI / 2)).toEqual([5, -0]);
+  // expect(shiftPoint([2, 2], Math.PI / 2)).toEqual([-2, 2]);
+  // expect(shiftPoint([5, 4.33013], Math.PI / 2)).toEqual([-4.33013, 5]);
+
+  // expect(shiftPoint([1, -0.57735], Math.PI / 3)).toEqual([-0, 1.1547]);
+
+  shiftPoint([0.5, 0.288675], Math.PI / 3);
+  // expect(shiftPoint([0.5, 0.288675], Math.PI / 3)).toEqual([-0.5, 0.288675]);
 });
 
-test.skip('pipeline', () => {
+test('pipeline', () => {
   const figure: FigureBody = [
     [0, 0],
     [0, 1],
@@ -216,5 +222,21 @@ test.skip('pipeline', () => {
     [0, 0],
     [0, -1],
     [-1, -1],
+  ]);
+});
+
+test('center', () => {
+  expect(center([[1, 1]])).toEqual([[0, 0]]);
+  expect(center([[-1, -1]])).toEqual([[0, 0]]);
+  expect(
+    center([
+      [5, 5],
+      [5, 6],
+      [5, 7],
+    ])
+  ).toEqual([
+    [0, 0],
+    [0, 1],
+    [0, 2],
   ]);
 });

@@ -12,3 +12,5 @@ export const colorMap = new Map([
   [4, 'orange'],
   [5, 'yellow'],
 ]);
+
+export const deg = 180 / Math.PI;

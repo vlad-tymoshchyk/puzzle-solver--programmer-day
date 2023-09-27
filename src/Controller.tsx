@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Field, FigureBody } from './types';
 import { solver } from './solver';
 import { useDispatch } from 'react-redux';
-import { emptyField } from './fixtures';
+import { emptyField, map } from './fixtures';
 import {
+  center,
   coordinatesToIndices,
   fieldFromFigure,
   indicesToCoordinates,
   turnCoordinates,
+  r,
 } from './utils';
 import { setState } from './store/actions';
 
@@ -27,13 +29,7 @@ export function doOverlap(...fields: Field[]): boolean {
 
 let figure: FigureBody = [
   [0, 0],
-  [1, 0],
-  [1, 1],
-  [1, 1],
-  [1, 2],
-  [1, 3],
-  [2, 3],
-  [2, 4],
+  [0, 1],
 ];
 
 export const Controller = () => {
@@ -47,12 +43,42 @@ export const Controller = () => {
     );
   }, []);
 
+  console.log('map', map);
+  console.log(
+    map
+      .map((row) =>
+        row
+          .map(
+            (cell) =>
+              `${cell.coords && r(cell.coords[0])},${
+                cell.coords && r(cell.coords[1])
+              } `
+          )
+          .join(' ')
+      )
+      .join('\n')
+  );
+  console.log(
+    map
+      .map((row) =>
+        row
+          .map(
+            (cell) => `${cell.res && cell.res[0]},${cell.res && cell.res[1]} `
+          )
+          .join(' ')
+      )
+      .join('\n')
+  );
   const experiment = () => {
     const coords = figure.map(indicesToCoordinates);
+    console.log('coords', coords);
     const movedCoords = turnCoordinates(coords, Math.PI / (2 / 3));
-    const newFigure: [number, number][] = movedCoords
+    console.log('movedCoords', movedCoords);
+    let newFigure: [number, number][] = movedCoords
       .map(coordinatesToIndices)
       .map(([a, b]) => [a + 2, b + 4]);
+
+    newFigure = center(newFigure, 3);
 
     figure = newFigure;
     console.log('figure', figure);
