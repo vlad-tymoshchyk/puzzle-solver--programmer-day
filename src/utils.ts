@@ -160,32 +160,38 @@ export function getXDistance(c1: number, c2: number) {
 }
 
 export function getBaseAngle(x: number, y: number): number {
+  let angle: number;
   if (y === 0 && x >= 0) {
-    return 0;
+    angle = 0;
   } else if (x > 0 && y > 0) {
-    return Math.atan(y / x);
+    angle = Math.atan(y / x);
   } else if (x === 0 && y >= 0) {
-    return Math.PI / 2;
+    angle = Math.PI / 2;
   } else if (x < 0 && y > 0) {
-    return Math.atan(y / -x) + Math.PI / 2;
+    angle = Math.PI - Math.atan(y / -x);
   } else if (y === 0 && x < 0) {
-    return Math.PI;
+    angle = Math.PI;
   } else if (x < 0 && y < 0) {
-    return Math.atan(-y / -x) + Math.PI;
+    angle = Math.atan(-y / -x) + Math.PI;
   } else if (x === 0 && y < 0) {
-    return Math.PI * (3 / 2);
+    angle = Math.PI * (3 / 2);
   } else if (x > 0 && y < 0) {
-    return Math.atan(-y / x) + Math.PI * (3 / 2);
+    angle = Math.PI * 2 - Math.atan(-y / x);
   } else {
-    console.error('No condition worked', x, y);
+    throw new Error('No condition worked , x:' + x + ', y:' + y);
   }
+
+  return r(angle, 3);
 }
 
 export function ang(angle: number) {
   return (angle / Math.PI) * 180;
 }
+
 export function r(num: number, count: number = 5): number {
-  return +num.toFixed(count);
+  const multiplier = 10 ** count;
+  const res = Math.round(num * multiplier) / multiplier;
+  return res;
 }
 export function shiftPoint([x, y], shiftAngle: number): [number, number] {
   if (x === 0 && y === 0) {
@@ -198,9 +204,15 @@ export function shiftPoint([x, y], shiftAngle: number): [number, number] {
   // console.log('shiftAngle * deg', shiftAngle * deg);
   // console.log('angle', angle * deg);
   const hyp = Math.sqrt(x ** 2 + y ** 2);
+  // console.log(
+  //   'hyp, angle * deg, Math.cos(angle)',
+  //   hyp,
+  //   angle * deg,
+  //   Math.sin(angle)
+  // );
   const res: [number, number] = [
-    r(Math.sin(angle) * hyp),
-    r(Math.cos(angle) * hyp),
+    r(Math.cos(angle) * hyp, 7),
+    r(Math.sin(angle) * hyp, 7),
   ];
   return res;
 }
@@ -220,7 +232,14 @@ export function indicesToCoordinates([r_i, c_i]: [number, number]): [
   number,
   number
 ] {
-  return [c_i * 0.5, -r_i * _height + (isUp(r_i, c_i) ? 0 : _d)];
+  return [
+    c_i * 0.5,
+    -(r_i * _height + (isUp(r_i, c_i) ? _bigSide : _smallSide)),
+  ];
+}
+
+export function floor(i: number): number {
+  return Math.floor(i) + (i < 0 ? 1 : 0);
 }
 
 export function coordinatesToIndices([x, y]: [number, number]): [
@@ -231,9 +250,9 @@ export function coordinatesToIndices([x, y]: [number, number]): [
     console.log('ERROR, NESTED ARRAY', x, y);
     console.trace();
   }
-  const _y = -(y - (y % _height));
-  const indices: [number, number] = [r(_y / _height), r(x / 0.5)];
-  console.log('indices, x, y', indices, x, y);
+  const r_i = floor(-y / _height) + (y > 0 ? -1 : 0);
+  const c_i = x / 0.5;
+  const indices: [number, number] = [r_i, c_i];
 
   return indices;
 }

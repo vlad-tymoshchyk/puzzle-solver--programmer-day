@@ -1,3 +1,5 @@
+import { r } from './utils';
+
 export const CELL_SIDE = 50;
 export const CELL_HEIGHT = CELL_SIDE * Math.cos(Math.PI / 6);
 
@@ -13,4 +15,5 @@ export const colorMap = new Map([
   [5, 'yellow'],
 ]);
 
-export const deg = 180 / Math.PI;
+export const DEG = 180 / Math.PI;
+export const deg = (degRadian: number) => r(degRadian * DEG, 1);

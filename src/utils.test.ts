@@ -21,6 +21,7 @@ import {
   center,
 } from './utils';
 import { FigureBody } from './types';
+import { deg } from './constants';
 
 test('fromString', () => {
   expect(
@@ -166,46 +167,90 @@ test('getXDistance', () => {
 });
 
 test('indicesToCoordinates', () => {
-  expect(indicesToCoordinates([0, 0])).toEqual([0, 0]);
-  expect(indicesToCoordinates([0, 1])).toEqual([0.5, _d]);
-  expect(indicesToCoordinates([1, 1])).toEqual([0.5, -_height]);
-  expect(indicesToCoordinates([-1, -1])).toEqual([-0.5, _height]);
+  expect(indicesToCoordinates([0, 0])).toEqual([0, -_bigSide]);
+  expect(indicesToCoordinates([0, 1])).toEqual([0.5, -_smallSide]);
+  expect(indicesToCoordinates([1, 1])).toEqual([0.5, -(_height + _bigSide)]);
+  expect(indicesToCoordinates([-1, -1])).toEqual([-0.5, _smallSide]);
 });
 
 test('coordinatesToIndices', () => {
-  expect(coordinatesToIndices([0, 0])).toEqual([0, 0]);
-  expect(coordinatesToIndices([0.5, _d])).toEqual([0, 1]);
-  expect(coordinatesToIndices([0.5, -_height])).toEqual([1, 1]);
-  expect(coordinatesToIndices([2.5, -_height * 4 - _d])).toEqual([4, 5]);
+  // expect(coordinatesToIndices([0, 0])).toThrowError();
+  expect(coordinatesToIndices([0, -_bigSide])).toEqual([0, 0]);
+  expect(coordinatesToIndices([1, -_bigSide])).toEqual([0, 2]);
+  expect(coordinatesToIndices([-1, _height + _smallSide])).toEqual([-2, -2]);
+  // expect(coordinatesToIndices([0, 0])).toEqual([0, 0]);
+  // expect(coordinatesToIndices([0.5, _d])).toEqual([0, 1]);
+  // expect(coordinatesToIndices([0.5, -_height])).toEqual([1, 1]);
+  // expect(coordinatesToIndices([2.5, -_height * 4 - _d])).toEqual([4, 5]);
+  for (let i = -10; i <= 10; i++) {
+    for (let j = -10; j <= 10; j++) {
+      expect(coordinatesToIndices(indicesToCoordinates([i, j]))).toEqual([
+        i,
+        j,
+      ]);
+    }
+  }
 });
 
 test('getBaseAngle', () => {
-  expect(getBaseAngle(0, 0)).toBe(0);
-  expect(getBaseAngle(5, 0)).toBe(0);
-  expect(getBaseAngle(5, 5)).toBe(Math.PI / 4);
-  expect(getBaseAngle(0, 5)).toBe(Math.PI / 2);
-  expect(getBaseAngle(-5, 5)).toBe(Math.PI * (3 / 4));
-  expect(getBaseAngle(-5, 0)).toBe(Math.PI);
-  expect(getBaseAngle(-5, -5)).toBe(Math.PI * (5 / 4));
-  expect(getBaseAngle(0, -5)).toBe(Math.PI * (3 / 2));
+  expect(deg(getBaseAngle(0, 0))).toBe(0);
+  expect(deg(getBaseAngle(5, 0))).toBe(0);
+
+  expect(deg(getBaseAngle(Math.sqrt(75), 5))).toBe(30);
+  expect(deg(getBaseAngle(5, 5))).toBe(45);
+  expect(deg(getBaseAngle(5, Math.sqrt(75)))).toBe(60);
+
+  expect(deg(getBaseAngle(0, 5))).toBe(90);
+
+  expect(deg(getBaseAngle(-5, Math.sqrt(75)))).toBe(120);
+  expect(deg(getBaseAngle(-5, 5))).toBe(135);
+  expect(deg(getBaseAngle(-Math.sqrt(75), 5))).toBe(150);
+
+  expect(deg(getBaseAngle(-5, 0))).toBe(180);
+
+  expect(deg(getBaseAngle(-Math.sqrt(75), -5))).toBe(210);
+  expect(deg(getBaseAngle(-5, -5))).toBe(225);
+  expect(deg(getBaseAngle(-5, -Math.sqrt(75)))).toBe(240);
+
+  expect(deg(getBaseAngle(0, -5))).toBe(270);
+
+  expect(deg(getBaseAngle(5, -Math.sqrt(75)))).toBe(300);
+  expect(deg(getBaseAngle(5, -5))).toBe(315);
+  expect(deg(getBaseAngle(Math.sqrt(75), -5))).toBe(330);
 });
 
-test.only('shiftPoint', () => {
+test.skip('shiftPoint', () => {
   // expect(shiftPoint([0, 0], Math.PI / 2)).toEqual([0, 0]);
-  // expect(shiftPoint([5, 0], Math.PI / 2)).toEqual([0, 5]);
-  // expect(shiftPoint([0, 5], Math.PI / 2)).toEqual([-5, 0]);
-  // expect(shiftPoint([-5, 0], Math.PI / 2)).toEqual([-0, -5]);
-  // expect(shiftPoint([0, -5], Math.PI / 2)).toEqual([5, -0]);
-  // expect(shiftPoint([2, 2], Math.PI / 2)).toEqual([-2, 2]);
-  // expect(shiftPoint([5, 4.33013], Math.PI / 2)).toEqual([-4.33013, 5]);
+  expect(shiftPoint([5, 0], Math.PI / 2)).toEqual([0, 5]);
+  expect(shiftPoint([5, 5], Math.PI / 2)).toEqual([-5, 5]);
+  expect(shiftPoint([0, 5], Math.PI / 2)).toEqual([-5, 0]);
+  expect(shiftPoint([-5, 5], Math.PI / 2)).toEqual([-5, -5]);
+  expect(shiftPoint([-5, 0], Math.PI / 2)).toEqual([-0, -5]);
+  expect(shiftPoint([-5, -5], Math.PI / 2)).toEqual([5, -5]);
+  expect(shiftPoint([0, -5], Math.PI / 2)).toEqual([5, -0]);
+  expect(shiftPoint([2, 2], Math.PI / 2)).toEqual([-2, 2]);
+  expect(shiftPoint([5, 4.33013], Math.PI / 2)).toEqual([-4.33013, 5]);
 
-  // expect(shiftPoint([1, -0.57735], Math.PI / 3)).toEqual([-0, 1.1547]);
-
-  shiftPoint([0.5, 0.288675], Math.PI / 3);
-  // expect(shiftPoint([0.5, 0.288675], Math.PI / 3)).toEqual([-0.5, 0.288675]);
+  for (let i = -10; i <= 10; i++) {
+    for (let j = -10; j <= 10; j++) {
+      const coords = indicesToCoordinates([i, j]);
+      console.log('i, j, coords', i, j, coords);
+      const moved = shiftPoint(coords, Math.PI / 3);
+      const indices = coordinatesToIndices(moved);
+      expect(indices[0]).toBe(Math.round(indices[0]));
+      expect(indices[1]).toBe(Math.round(indices[1]));
+      // moved = shiftPoint(moved, Math.PI / 2);
+      // moved = shiftPoint(moved, Math.PI / 3);
+      // moved = shiftPoint(moved, Math.PI / 3);
+      // moved = shiftPoint(moved, Math.PI / 3);
+      // moved = shiftPoint(moved, Math.PI / 3);
+      // moved = shiftPoint(moved, Math.PI / 3);
+      // expect(indices).toEqual([-i - 1, j]);
+    }
+  }
 });
 
-test('pipeline', () => {
+test.skip('pipeline', () => {
   const figure: FigureBody = [
     [0, 0],
     [0, 1],
