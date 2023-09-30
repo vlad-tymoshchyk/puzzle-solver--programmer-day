@@ -10,6 +10,7 @@ import {
   indicesToCoordinates,
   turnCoordinates,
   r,
+  turnFigure,
 } from './utils';
 import { setState } from './store/actions';
 
@@ -70,32 +71,13 @@ export const Controller = () => {
       .join('\n')
   );
   const experiment = () => {
-    const coords = figure.map(indicesToCoordinates);
-    console.log('coords', coords);
-    const movedCoords = turnCoordinates(coords, Math.PI / (2 / 3));
-    console.log('movedCoords', movedCoords);
-    let newFigure: [number, number][] = movedCoords
-      .map(coordinatesToIndices)
-      .map(([a, b]) => [a + 2, b + 4]);
-
-    newFigure = center(newFigure, 3);
-
-    figure = newFigure;
-    console.log('figure', figure);
-
-    const offsetY = figure.reduce(
-      (min, value) => (value[0] < min ? value : min),
-      figure[0][0]
-    );
-    const offsetX = figure.reduce(
-      (min, value) => (value[1] < min ? value : min),
-      figure[0][1]
-    );
-    console.log('offsetX, offsetY', offsetX, offsetY);
+    const turnedFigure = turnFigure(figure, Math.PI / 6);
+    console.log('figure, turnedFigure', figure, turnedFigure);
+    figure = turnedFigure;
 
     dispatch(
       setState({
-        field: emptyField.overlap(fieldFromFigure(figure, 2)),
+        field: emptyField.overlap(fieldFromFigure(turnedFigure, 2)),
       })
     );
   };

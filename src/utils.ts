@@ -1,7 +1,7 @@
 import { HEIGHT, WIDTH, deg } from './constants';
 import { FigureBody, Field } from './types';
 
-export function isUp(y: number, x: number) {
+export function isUp([y, x]: [number, number]) {
   return (y % 2 === 0 && x % 2 === 0) || (y % 2 !== 0 && x % 2 !== 0);
 }
 
@@ -87,7 +87,7 @@ export function findCombinations(
   const head_c = figure[0][1];
 
   baseField.forEachEmpty((_, r_i, c_i) => {
-    if (isUp(r_i, c_i)) {
+    if (isUp([r_i, c_i])) {
       const offset_y = r_i - head_r;
       const offset_x = c_i - head_c;
       let f = moveY(figure, offset_y);
@@ -121,31 +121,34 @@ export function getYDistance([r1, c1], [r2, c2]) {
   const fullCellsInBetween = Math.abs(r1 - r2) - 1;
   let distance = fullCellsInBetween * (_smallSide + _bigSide);
   if (r1 < r2) {
-    if (isUp(r1, c1)) {
+    if (isUp([r1, c1])) {
       distance += _smallSide;
     } else {
       distance += _bigSide;
     }
 
-    if (isUp(r2, c2)) {
+    if (isUp([r2, c2])) {
       distance += _bigSide;
     } else {
       distance += _smallSide;
     }
   } else if (r1 > r2) {
-    if (isUp(r1, c1)) {
+    if (isUp([r1, c1])) {
       distance += _bigSide;
     } else {
       distance += _smallSide;
     }
 
-    if (isUp(r2, c2)) {
+    if (isUp([r2, c2])) {
       distance += _smallSide;
     } else {
       distance += _bigSide;
     }
   } else {
-    if ((isUp(r1, c1) && isUp(r2, c2)) || (!isUp(r1, c1) && !isUp(r2, c2))) {
+    if (
+      (isUp([r1, c1]) && isUp([r2, c2])) ||
+      (!isUp([r1, c1]) && !isUp([r2, c2]))
+    ) {
       distance = 0;
     } else {
       distance = _bigSide - _smallSide;
@@ -234,7 +237,7 @@ export function indicesToCoordinates([r_i, c_i]: [number, number]): [
 ] {
   return [
     c_i * 0.5,
-    -(r_i * _height + (isUp(r_i, c_i) ? _bigSide : _smallSide)),
+    -(r_i * _height + (isUp([r_i, c_i]) ? _bigSide : _smallSide)),
   ];
 }
 
@@ -252,7 +255,7 @@ export function coordinatesToIndices([x, y]: [number, number]): [
   }
   const r_i = floor(-y / _height) + (y > 0 ? -1 : 0);
   const c_i = x / 0.5;
-  const indices: [number, number] = [r_i, c_i];
+  const indices: [number, number] = [Math.round(r_i), Math.round(c_i)];
 
   return indices;
 }
@@ -261,7 +264,42 @@ export function center(figure: FigureBody, padding: number = 0): FigureBody {
   const offset_r = Math.min(...figure.map(([r_i]) => r_i));
   const offset_c = Math.min(...figure.map(([_, c_i]) => c_i));
 
-  return figure.map(([r_i, c_i]) => {
-    return [r_i - offset_r + padding, c_i - offset_c + padding];
-  });
+  let shift_r = -Math.floor(offset_r / 2) * 2;
+  let shift_c = -Math.floor(offset_c / 2) * 2;
+
+  if (offset_r + shift_r === 1 && offset_c + shift_c === 1) {
+    shift_r -= 1;
+    shift_c -= 1;
+  }
+
+  const centeredFigure: FigureBody = figure.map(([r_i, c_i]) => [
+    r_i + shift_r + padding,
+    c_i + shift_c + padding,
+  ]);
+
+  return centeredFigure;
+}
+
+export function turnFigure(figure: FigureBody, angle: number): FigureBody {
+  const coords = figure.map(indicesToCoordinates);
+  const turnedCoords = turnCoordinates(coords, angle);
+  const turnedFigure = turnedCoords.map(coordinatesToIndices);
+  console.log(
+    'figure, turnedFigure',
+    figure,
+    turnedFigure,
+    center(turnedFigure)
+  );
+
+  // if (!isUp(turnedFigure[0])) {
+  //   if (!isUp(turnedFigure[1])) {
+  //     throw new Error('If first triangle is not up, the second should be');
+  //   }
+
+  //   const second = turnedFigure[1];
+  //   turnedFigure[1] = turnedFigure[0];
+  //   turnedFigure[0] = second;
+  // }
+
+  return center(turnedFigure);
 }

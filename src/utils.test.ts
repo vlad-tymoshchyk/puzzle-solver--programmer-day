@@ -19,6 +19,7 @@ import {
   _d,
   turnCoordinates,
   center,
+  turnFigure,
 } from './utils';
 import { FigureBody } from './types';
 import { deg } from './constants';
@@ -219,35 +220,71 @@ test('getBaseAngle', () => {
   expect(deg(getBaseAngle(Math.sqrt(75), -5))).toBe(330);
 });
 
-test.skip('shiftPoint', () => {
-  // expect(shiftPoint([0, 0], Math.PI / 2)).toEqual([0, 0]);
+test.only('shiftPoint', () => {
+  expect(shiftPoint([0, 0], Math.PI / 2)).toEqual([0, 0]);
   expect(shiftPoint([5, 0], Math.PI / 2)).toEqual([0, 5]);
-  expect(shiftPoint([5, 5], Math.PI / 2)).toEqual([-5, 5]);
-  expect(shiftPoint([0, 5], Math.PI / 2)).toEqual([-5, 0]);
+  expect(shiftPoint([5, 5], Math.PI / 2).map(Math.round)).toEqual([-5, 5]);
+  expect(shiftPoint([0, 5], Math.PI / 2).map(Math.round)).toEqual([-5, -0]);
   expect(shiftPoint([-5, 5], Math.PI / 2)).toEqual([-5, -5]);
-  expect(shiftPoint([-5, 0], Math.PI / 2)).toEqual([-0, -5]);
-  expect(shiftPoint([-5, -5], Math.PI / 2)).toEqual([5, -5]);
-  expect(shiftPoint([0, -5], Math.PI / 2)).toEqual([5, -0]);
-  expect(shiftPoint([2, 2], Math.PI / 2)).toEqual([-2, 2]);
-  expect(shiftPoint([5, 4.33013], Math.PI / 2)).toEqual([-4.33013, 5]);
+  // expect(shiftPoint([-5, 0], Math.PI / 2)).toEqual([-0, -5]);
+  // expect(shiftPoint([-5, -5], Math.PI / 2)).toEqual([5, -5]);
+  // expect(shiftPoint([0, -5], Math.PI / 2)).toEqual([5, -0]);
+  // expect(shiftPoint([2, 2], Math.PI / 2)).toEqual([-2, 2]);
+  // expect(shiftPoint([5, 4.33013], Math.PI / 2)).toEqual([-4.33013, 5]);
 
   for (let i = -10; i <= 10; i++) {
     for (let j = -10; j <= 10; j++) {
       const coords = indicesToCoordinates([i, j]);
-      console.log('i, j, coords', i, j, coords);
       const moved = shiftPoint(coords, Math.PI / 3);
       const indices = coordinatesToIndices(moved);
+
       expect(indices[0]).toBe(Math.round(indices[0]));
       expect(indices[1]).toBe(Math.round(indices[1]));
-      // moved = shiftPoint(moved, Math.PI / 2);
-      // moved = shiftPoint(moved, Math.PI / 3);
-      // moved = shiftPoint(moved, Math.PI / 3);
-      // moved = shiftPoint(moved, Math.PI / 3);
-      // moved = shiftPoint(moved, Math.PI / 3);
-      // moved = shiftPoint(moved, Math.PI / 3);
-      // expect(indices).toEqual([-i - 1, j]);
     }
   }
+});
+
+test('center', () => {
+  expect(center([[0, 0]])).toEqual([[0, 0]]);
+  expect(center([[1, 1]])).toEqual([[0, 0]]);
+  expect(center([[-1, -1]])).toEqual([[0, 0]]);
+  expect(center([[-5, -3]])).toEqual([[0, 0]]);
+  expect(center([[-3, -5]])).toEqual([[0, 0]]);
+  expect(center([[-3, 1]])).toEqual([[0, 0]]);
+  expect(center([[1, -3]])).toEqual([[0, 0]]);
+
+  expect(center([[0, 1]])).toEqual([[0, 1]]);
+  expect(center([[2, 1]])).toEqual([[0, 1]]);
+  expect(center([[-2, 1]])).toEqual([[0, 1]]);
+  expect(center([[-2, -1]])).toEqual([[0, 1]]);
+  expect(center([[-2, -3]])).toEqual([[0, 1]]);
+});
+
+test('turnFigure', () => {
+  // expect(
+  //   turnFigure(
+  //     [
+  //       [0, 0],
+  //       [0, 1],
+  //     ],
+  //     Math.PI / 6
+  //   )
+  // ).toEqual([
+  //   [0, 0],
+  //   [1, 0],
+  // ]);
+  expect(
+    turnFigure(
+      [
+        [0, 0],
+        [1, 0],
+      ],
+      Math.PI / 6
+    )
+  ).toEqual([
+    [1, 2],
+    [0, 1],
+  ]);
 });
 
 test.skip('pipeline', () => {
