@@ -1,25 +1,72 @@
-import { easyField, figure_1_1, figure_1_2, figure_1_3 } from './fixtures';
+import {
+  easyField,
+  figures_1,
+  figures_2,
+  figures_3,
+  figures_4,
+} from './fixtures';
 import { store } from './store';
 import { setState } from './store/actions';
+import { Field } from './types';
 import { wait, findCombinations, filterGoodCombinations } from './utils';
 
 export const solver = async () => {
-  const figures = [figure_1_1, figure_1_2, figure_1_3];
+  let figuresToDisplay: Field[] = [];
+  let solutions: Field[] = [];
 
-  for (let i = 0; i < figures.length; i++) {
-    const figure = figures[i];
+  figures_1.forEach((figure) => {
     const combinations = findCombinations(easyField, figure, 2);
-    const figuresToDisplay = filterGoodCombinations(easyField, combinations);
+    const goodCombinations = filterGoodCombinations(easyField, combinations);
 
-    for (let i = 0; i < figuresToDisplay.length; i++) {
-      const field = figuresToDisplay[i];
-      store.dispatch(
-        setState({
-          field,
-          goodCombinations: [...store.getState().goodCombinations, field],
-        })
-      );
-      await wait(300);
-    }
+    goodCombinations.forEach((field_1) => {
+      figuresToDisplay.push(field_1);
+
+      figures_2.forEach((figure) => {
+        const combinations = findCombinations(field_1, figure, 3);
+        const goodCombinations = filterGoodCombinations(field_1, combinations);
+
+        goodCombinations.forEach((field_2) => {
+          figuresToDisplay.push(field_2);
+
+          figures_3.forEach((figure) => {
+            const combinations = findCombinations(field_2, figure, 4);
+            const goodCombinations = filterGoodCombinations(
+              field_2,
+              combinations
+            );
+
+            goodCombinations.forEach((field_3) => {
+              figuresToDisplay.push(field_3);
+
+              figures_4.forEach((figure) => {
+                const combinations = findCombinations(field_3, figure, 4);
+                const goodCombinations = filterGoodCombinations(
+                  field_3,
+                  combinations
+                );
+
+                figuresToDisplay = [...figuresToDisplay, ...goodCombinations];
+                solutions = goodCombinations;
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  for (let i = 0; i < figuresToDisplay.length; i++) {
+    const field = figuresToDisplay[i];
+    store.dispatch(
+      setState({
+        field,
+        goodCombinations: [...store.getState().goodCombinations, field],
+        solutions: [
+          ...store.getState().solutions,
+          ...(solutions.includes(field) ? [field] : []),
+        ],
+      })
+    );
+    await wait(50);
   }
 };

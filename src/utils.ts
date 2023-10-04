@@ -1,6 +1,31 @@
 import { HEIGHT, WIDTH, deg } from './constants';
 import { FigureBody, Field } from './types';
 
+export function getBaseAngle(x: number, y: number): number {
+  let angle: number;
+  if (y === 0 && x >= 0) {
+    angle = 0;
+  } else if (x > 0 && y > 0) {
+    angle = Math.atan(y / x);
+  } else if (x === 0 && y >= 0) {
+    angle = Math.PI / 2;
+  } else if (x < 0 && y > 0) {
+    angle = Math.PI - Math.atan(y / -x);
+  } else if (y === 0 && x < 0) {
+    angle = Math.PI;
+  } else if (x < 0 && y < 0) {
+    angle = Math.atan(-y / -x) + Math.PI;
+  } else if (x === 0 && y < 0) {
+    angle = Math.PI * (3 / 2);
+  } else if (x > 0 && y < 0) {
+    angle = Math.PI * 2 - Math.atan(-y / x);
+  } else {
+    throw new Error('No condition worked , x:' + x + ', y:' + y);
+  }
+
+  return angle;
+}
+
 export function isUp([y, x]: [number, number]) {
   return (y % 2 === 0 && x % 2 === 0) || (y % 2 !== 0 && x % 2 !== 0);
 }
@@ -160,31 +185,6 @@ export function getYDistance([r1, c1], [r2, c2]) {
 
 export function getXDistance(c1: number, c2: number) {
   return Math.abs(c1 - c2) * 0.5;
-}
-
-export function getBaseAngle(x: number, y: number): number {
-  let angle: number;
-  if (y === 0 && x >= 0) {
-    angle = 0;
-  } else if (x > 0 && y > 0) {
-    angle = Math.atan(y / x);
-  } else if (x === 0 && y >= 0) {
-    angle = Math.PI / 2;
-  } else if (x < 0 && y > 0) {
-    angle = Math.PI - Math.atan(y / -x);
-  } else if (y === 0 && x < 0) {
-    angle = Math.PI;
-  } else if (x < 0 && y < 0) {
-    angle = Math.atan(-y / -x) + Math.PI;
-  } else if (x === 0 && y < 0) {
-    angle = Math.PI * (3 / 2);
-  } else if (x > 0 && y < 0) {
-    angle = Math.PI * 2 - Math.atan(-y / x);
-  } else {
-    throw new Error('No condition worked , x:' + x + ', y:' + y);
-  }
-
-  return r(angle, 3);
 }
 
 export function ang(angle: number) {

@@ -1,10 +1,13 @@
 import { FigureBody } from './types';
 import {
   coordinatesToIndices,
+  flip,
   fromString,
   indicesToCoordinates,
+  isUp,
   shiftPoint,
   turnCoordinates,
+  turnFigure,
 } from './utils';
 
 export const emptyField = fromString(`
@@ -40,7 +43,7 @@ export const easyField = fromString(`
 111111111111111111
 `);
 
-export const figure_1_1: FigureBody = [
+export const figure_1: FigureBody = [
   [0, 0],
   [0, 1],
   [1, 0],
@@ -56,36 +59,49 @@ export const figure_1_1: FigureBody = [
   [1, 8],
 ];
 
-export const figure_1_2: FigureBody = [
+export const figure_2: FigureBody = [
   [0, 0],
   [0, 1],
-  [0, 2],
   [1, 0],
-  [1, -1],
-  [2, -1],
-  [2, 0],
-  [3, 0],
-  [3, 1],
-  [4, 1],
-  [4, 2],
-  [4, 3],
-  [4, 4],
+  [1, 1],
+  [2, 1],
+  [2, 2],
+  [2, 3],
+  [2, 4],
+  [2, 5],
+  [2, 6],
+  [3, 6],
+  [3, 7],
 ];
 
-export const figure_1_3: FigureBody = [
+export const figure_3: FigureBody = [
   [0, 0],
-  [0, 1],
-  [0, 2],
-  [0, 3],
-  [0, 4],
-  [1, 4],
   [1, 0],
-  [1, -1],
-  [2, -1],
-  [2, -2],
-  [3, -2],
-  [3, -1],
-  [4, -1],
+  [1, 1],
+  [2, 1],
+  [2, 2],
+  [2, 3],
+  [2, 4],
+  [3, 4],
+  [2, 5],
+  [2, 6],
+  [2, 7],
+  [1, 6],
+  [1, 7],
+];
+
+export const figure_4: FigureBody = [
+  [0, 0],
+  [1, 0],
+  [1, 1],
+  [1, 2],
+  [0, 2],
+  [1, 3],
+  [1, 4],
+  [1, 5],
+  [2, 5],
+  [2, 6],
+  [3, 6],
 ];
 
 export const MAP_SIDE = 2;
@@ -112,7 +128,7 @@ export const map = Array(MAP_SIDE * 2 + 1)
         const [ri, ci] = getMapIndex([r_i - MAP_SIDE * 2, c_i - MAP_SIDE * 2]);
         const coords: [number, number] = indicesToCoordinates([ri, ci]);
         const turnedCoords = shiftPoint(coords, (2 * Math.PI) / 3);
-        console.log('turnedCoords', turnedCoords);
+        // console.log('turnedCoords', turnedCoords);
         const res = coordinatesToIndices(turnedCoords);
 
         if (
@@ -120,13 +136,13 @@ export const map = Array(MAP_SIDE * 2 + 1)
             return num % 1 !== 0;
           })
         ) {
-          console.log('NOT INTEGER INDEX:', {
-            r_i,
-            c_i,
-            coords,
-            turnedCoords,
-            res,
-          });
+          // console.log('NOT INTEGER INDEX:', {
+          //   r_i,
+          //   c_i,
+          //   coords,
+          //   turnedCoords,
+          //   res,
+          // });
         }
         return {
           coords,
@@ -136,3 +152,43 @@ export const map = Array(MAP_SIDE * 2 + 1)
         };
       });
   });
+
+export function normalize(figure: FigureBody): FigureBody {
+  console.log('figure', figure.deepCopy);
+  const copy = figure.deepCopy<FigureBody>();
+  if (!isUp(copy[0])) {
+    if (!isUp(copy[1])) {
+      console.error(copy);
+      throw new Error('first element should be up');
+    }
+    const tmp = copy[1];
+    copy[1] = copy[0];
+    copy[0] = tmp;
+  }
+
+  return copy;
+}
+
+export function getAllCombinations(figure: FigureBody): FigureBody[] {
+  const flipedFigure = flip(figure);
+
+  return [
+    figure,
+    turnFigure(figure, Math.PI / 3),
+    turnFigure(figure, (Math.PI / 3) * 2),
+    turnFigure(figure, Math.PI),
+    turnFigure(figure, Math.PI + Math.PI / 3),
+    turnFigure(figure, Math.PI + (Math.PI / 3) * 2),
+    flipedFigure,
+    turnFigure(flipedFigure, Math.PI / 3),
+    turnFigure(flipedFigure, (Math.PI / 3) * 2),
+    turnFigure(flipedFigure, Math.PI),
+    turnFigure(flipedFigure, Math.PI + Math.PI / 3),
+    turnFigure(flipedFigure, Math.PI + (Math.PI / 3) * 2),
+  ].map(normalize);
+}
+
+export const figures_1 = getAllCombinations(figure_1);
+export const figures_2 = getAllCombinations(figure_2);
+export const figures_3 = getAllCombinations(figure_3);
+export const figures_4 = getAllCombinations(figure_4);

@@ -1,15 +1,18 @@
 import { Reducer } from 'redux';
 import { easyField } from '../fixtures';
 import { Field } from '../types';
+import { createEmptyField } from '../utils';
 
 export interface State {
   field: Field;
   goodCombinations: Field[];
+  solutions: Field[];
 }
 
 export const initialState: State = {
-  field: easyField,
+  field: createEmptyField(20, 20),
   goodCombinations: [],
+  solutions: [],
 };
 
 export const reducer: Reducer<
