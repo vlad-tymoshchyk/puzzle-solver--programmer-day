@@ -1,5 +1,4 @@
 import { Reducer } from 'redux';
-import { easyField } from '../fixtures';
 import { Field } from '../types';
 import { createEmptyField } from '../utils';
 

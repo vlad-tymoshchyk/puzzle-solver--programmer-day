@@ -13,6 +13,8 @@ export const FieldDisplayer = () => {
     <div>
       <Field field={field} />
       <hr />
+      Solutions found: {solutions.length}
+      <hr />
       <div className="row">
         {solutions.map((field) => {
           return <Field scale={0.4} field={field} />;

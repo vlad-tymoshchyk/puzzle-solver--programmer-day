@@ -1,5 +1,6 @@
 import {
   easyField,
+  hardField,
   figures_1,
   figures_2,
   figures_3,
@@ -15,8 +16,8 @@ export const solver = async () => {
   let solutions: Field[] = [];
 
   figures_1.forEach((figure) => {
-    const combinations = findCombinations(easyField, figure, 2);
-    const goodCombinations = filterGoodCombinations(easyField, combinations);
+    const combinations = findCombinations(hardField, figure, 2);
+    const goodCombinations = filterGoodCombinations(hardField, combinations);
 
     goodCombinations.forEach((field_1) => {
       figuresToDisplay.push(field_1);
@@ -35,18 +36,20 @@ export const solver = async () => {
               combinations
             );
 
+            // solutions = [...solutions, ...goodCombinations];
+
             goodCombinations.forEach((field_3) => {
               figuresToDisplay.push(field_3);
 
               figures_4.forEach((figure) => {
-                const combinations = findCombinations(field_3, figure, 4);
+                const combinations = findCombinations(field_3, figure, 5);
                 const goodCombinations = filterGoodCombinations(
                   field_3,
                   combinations
                 );
 
                 figuresToDisplay = [...figuresToDisplay, ...goodCombinations];
-                solutions = goodCombinations;
+                solutions = [...solutions, ...goodCombinations];
               });
             });
           });
@@ -55,16 +58,24 @@ export const solver = async () => {
     });
   });
 
+  console.log('solutions.length', solutions.length);
+
+  store.dispatch(
+    setState({
+      solutions,
+    })
+  );
+
   for (let i = 0; i < figuresToDisplay.length; i++) {
     const field = figuresToDisplay[i];
     store.dispatch(
       setState({
         field,
         goodCombinations: [...store.getState().goodCombinations, field],
-        solutions: [
-          ...store.getState().solutions,
-          ...(solutions.includes(field) ? [field] : []),
-        ],
+        // solutions: [
+        //   ...store.getState().solutions,
+        //   ...(solutions.includes(field) ? [field] : []),
+        // ],
       })
     );
     await wait(50);
